@@ -17,7 +17,7 @@ public class Main {
         stringList.add("Привет");
 //        stringList.add(0, null);
 //        stringList.set(0, "Перезаписал");
-//        stringList.remove("Приветл");
+//        System.out.println(stringList.remove("Привет"));
 //        stringList.remove(3);
 //        System.out.println(stringList.lastIndexOf("Пока2"));
 //        System.out.println(stringList.get(0));
