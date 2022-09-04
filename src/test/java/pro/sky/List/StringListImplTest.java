@@ -154,6 +154,7 @@ class StringListImplTest {
                 Arguments.of(Book),
                 Arguments.of(Bye),
                 Arguments.of(News)
+
         );
     }
 }
