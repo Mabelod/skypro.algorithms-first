@@ -3,22 +3,25 @@ package pro.sky.List;
 import pro.sky.Exception.ArrayLengthExceeded;
 import pro.sky.Exception.ValueError;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
-public class StringListImpl implements StringList{
+public class IntegerListImpl implements IntegerList{
 
-    private String[] storage;
+    private Integer[] storage;
 
-    public StringListImpl() {
-        storage = new String[0];
+    public IntegerListImpl() {
+        storage = new Integer[0];
     }
 
     @Override
-    public String add(String item) {
+    public Integer add(Integer item) {
         if (item == null) {
             throw new NullPointerException();
         }
-        String[] array = new String[storage.length + 1];
+        Integer[] array = new Integer[storage.length + 1];
         System.arraycopy(storage, 0, array, 0, storage.length);
         array[storage.length] = item;
         storage = array;
@@ -26,8 +29,8 @@ public class StringListImpl implements StringList{
     }
 
     @Override
-    public String add(int index, String item) {
-        String[] array = new String[storage.length + 1];
+    public Integer add(int index, Integer item) {
+        Integer[] array = new Integer[storage.length + 1];
         if (index >= storage.length) {
             throw new ArrayLengthExceeded("Привышена длинна массива");
         } else if (item == null) {
@@ -41,8 +44,8 @@ public class StringListImpl implements StringList{
     }
 
     @Override
-    public String set(int index, String item) {
-        String[] array = new String[storage.length];
+    public Integer set(int index, Integer item) {
+        Integer[] array = new Integer[storage.length];
         if (index >= storage.length) {
             throw new ArrayLengthExceeded("Привышена длинна массива");
         } else if (item == null) {
@@ -55,8 +58,8 @@ public class StringListImpl implements StringList{
     }
 
     @Override
-    public String remove(String item) {
-        String[] array = new String[storage.length];
+    public Integer remove(Integer item) {
+        Integer[] array = new Integer[storage.length];
         System.arraycopy(storage, 0, array, 0, storage.length);
         int counter = 0;
         for (int i = 0; i < array.length; i++) {
@@ -68,36 +71,49 @@ public class StringListImpl implements StringList{
         if (counter == 0) {
             throw new ValueError("Элемент отсутсвует в массиве");
         }
-        storage = Arrays.stream(array).filter(Objects::nonNull).toArray(String[]::new);
+        storage = Arrays.stream(array).filter(Objects::nonNull).toArray(Integer[]::new);
         return item;
     }
 
     @Override
-    public String remove(int index) {
+    public Integer remove(int index) {
         if (index >= storage.length) {
             throw new ArrayLengthExceeded("Привышена длинна массива");
         }
-        String[] array = new String[storage.length];
+        Integer[] array = new Integer[storage.length];
         System.arraycopy(storage, 0, array, 0, storage.length);
-        String value = array[index];
+        Integer value = array[index];
         array[index] = null;
-        storage = Arrays.stream(array).filter(Objects::nonNull).toArray(String[]::new);
+        storage = Arrays.stream(array).filter(Objects::nonNull).toArray(Integer[]::new);
         return value;
     }
 
     @Override
-    public boolean contains(String item) {
-        boolean x = false;
-        for (String s : storage) {
-            if (s.equals(item)) {
-                x = true;
+    public boolean contains(Integer item) {
+        if (item == null) {
+            throw new NullPointerException();
+        }
+        Integer[] arrayForSearch = toArray();
+        sortInsertion(arrayForSearch);
+
+        int min = 0;
+        int max = arrayForSearch.length - 1;
+        while (min <= max) {
+            int mid = (min + max) / 2;
+            if (item.equals(arrayForSearch[mid])) {
+                return true;
+            }
+            if (item < arrayForSearch[mid]) {
+                max = mid - 1;
+            } else {
+                min = mid + 1;
             }
         }
-        return x;
+        return false;
     }
 
     @Override
-    public int indexOf(String item) {
+    public int indexOf(Integer item) {
         int index = -1;
         for (int i = 0; i < storage.length; i++) {
             if (this.storage[i].equals(item)) {
@@ -109,7 +125,7 @@ public class StringListImpl implements StringList{
     }
 
     @Override
-    public int lastIndexOf(String item) {
+    public int lastIndexOf(Integer item) {
         int index = -1;
         for (int i = storage.length - 1; i >= 0; i--) {
             if (storage[i].equals(item)) {
@@ -121,7 +137,7 @@ public class StringListImpl implements StringList{
     }
 
     @Override
-    public String get(int index) {
+    public Integer get(int index) {
         if (index >= storage.length) {
             throw new ArrayLengthExceeded("Привышена длинна массива");
         }
@@ -129,14 +145,14 @@ public class StringListImpl implements StringList{
     }
 
     @Override
-    public boolean equals(StringList otherList) {
-        if (otherList == null) {
+    public boolean equals(IntegerList integerList) {
+        if (integerList == null) {
             throw new NullPointerException();
-        } else if (otherList.size() != storage.length) {
+        } else if (integerList.size() != storage.length) {
             return false;
         }
         for (int i = 0; i < storage.length; i++) {
-            if (!storage[i].equals(otherList.get(i))) {
+            if (!storage[i].equals(integerList.get(i))) {
                 return false;
             }
         }
@@ -156,12 +172,23 @@ public class StringListImpl implements StringList{
     @Override
     public void clear() {
         Arrays.fill(storage, null);
-        storage = Arrays.stream(storage).filter(Objects::nonNull).toArray(String[]::new);
+        storage = Arrays.stream(storage).filter(Objects::nonNull).toArray(Integer[]::new);
     }
 
     @Override
-    public String[] toArray() {
-        return storage;
+    public Integer[] toArray() {
+        return Arrays.copyOf(storage, storage.length);
     }
 
+    private static void sortInsertion(Integer[] arr) { // сортировка вставками
+        for (int i = 1; i < arr.length; i++) {
+            int temp = arr[i];
+            int j = i - 1;
+            while (j >= 0 && temp < arr[j]) {
+                arr[j + 1] = arr[j];
+                j--;
+            }
+            arr[j + 1] = temp;
+        }
+    }
 }
