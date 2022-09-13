@@ -13,7 +13,7 @@ public class IntegerListImpl implements IntegerList{
     private Integer[] storage;
 
     public IntegerListImpl() {
-        storage = new Integer[0];
+        storage = new Integer[10];
     }
 
     @Override
@@ -21,26 +21,38 @@ public class IntegerListImpl implements IntegerList{
         if (item == null) {
             throw new NullPointerException();
         }
-        Integer[] array = new Integer[storage.length + 1];
-        System.arraycopy(storage, 0, array, 0, storage.length);
-        array[storage.length] = item;
-        storage = array;
+        if (storage[storage.length - 1] != null) {
+            grow();
+        }
+        for (int i = 0; i < storage.length; i++) {
+            if (storage[i] == null) {
+                storage[i] = item;
+                break;
+            }
+        }
         return item;
     }
 
     @Override
     public Integer add(int index, Integer item) {
-        Integer[] array = new Integer[storage.length + 1];
         if (index >= storage.length) {
             throw new ArrayLengthExceeded("Привышена длинна массива");
         } else if (item == null) {
             throw new NullPointerException();
+        } else if (storage[storage.length - 1] != null) {
+            grow();
         }
-        System.arraycopy(storage, 0, array, 0, storage.length);
-        array[index] = item;
-        System.arraycopy(storage, index, array, index + 1, array.length - (index + 1));
-        storage = array;
-        return item;
+        for (int length = storage.length - 1; length >= 0; length--) {
+            if (storage[length] != null) {
+                storage[length + 1] = storage[length];
+                storage[length] = null;
+                if (length == index) {
+                    storage[index] = item;
+                    break;
+                }
+            }
+        }
+        return index;
     }
 
     @Override
@@ -177,7 +189,21 @@ public class IntegerListImpl implements IntegerList{
 
     @Override
     public Integer[] toArray() {
-        return Arrays.copyOf(storage, storage.length);
+        int counter = 0;
+        Integer[] array = new Integer[storage.length - counter];
+
+        for (int i = 0; i < storage.length; i++) {
+            if (storage[i] == null) {
+                counter++;
+            }
+        }
+        for (int i = 0; i < storage.length; i++) {
+            if (storage[i] == null) {
+                break;
+            }
+            array[i] = storage[i];
+        }
+        return array;
     }
 
     private static void sortInsertion(Integer[] arr) { // сортировка вставками
@@ -190,5 +216,11 @@ public class IntegerListImpl implements IntegerList{
             }
             arr[j + 1] = temp;
         }
+    }
+
+    private void grow() {
+        Integer[] array = new Integer[storage.length + storage.length / 2];
+        System.arraycopy(storage, 0, array, 0, storage.length);
+        storage = array;
     }
 }
