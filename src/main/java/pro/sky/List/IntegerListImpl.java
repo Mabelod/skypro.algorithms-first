@@ -190,13 +190,13 @@ public class IntegerListImpl implements IntegerList{
     @Override
     public Integer[] toArray() {
         int counter = 0;
-        Integer[] array = new Integer[storage.length - counter];
 
         for (int i = 0; i < storage.length; i++) {
             if (storage[i] == null) {
                 counter++;
             }
         }
+        Integer[] array = new Integer[storage.length - counter];
         for (int i = 0; i < storage.length; i++) {
             if (storage[i] == null) {
                 break;
@@ -206,16 +206,46 @@ public class IntegerListImpl implements IntegerList{
         return array;
     }
 
-    private static void sortInsertion(Integer[] arr) { // сортировка вставками
-        for (int i = 1; i < arr.length; i++) {
-            int temp = arr[i];
-            int j = i - 1;
-            while (j >= 0 && temp < arr[j]) {
-                arr[j + 1] = arr[j];
-                j--;
-            }
-            arr[j + 1] = temp;
+    private void quickSort(Integer[] arr, int begin, int end) {
+        if (begin < end) {
+            int partitionIndex = partition(arr, begin, end);
+
+            quickSort(arr, begin, partitionIndex - 1);
+            quickSort(arr, partitionIndex + 1, end);
         }
+    }
+
+    private static int partition(Integer[] arr, int begin, int end) {
+        int pivot = arr[end];
+        int i = (begin - 1);
+
+        for (int j = begin; j < end; j++) {
+            if (arr[j] <= pivot) {
+                i++;
+                swapElements(arr, i, j);
+            }
+        }
+        swapElements(arr, i + 1, end);
+        return i + 1;
+    }
+
+    private static void swapElements(Integer[] arr, int left, int right) {
+        int temp = arr[left];
+        arr[left] = arr[right];
+        arr[right] = temp;
+    }
+
+    private void sortInsertion(Integer[] arr) { // сортировка вставками
+//        for (int i = 1; i < arr.length; i++) {
+//            int temp = arr[i];
+//            int j = i - 1;
+//            while (j >= 0 && temp < arr[j]) {
+//                arr[j + 1] = arr[j];
+//                j--;
+//            }
+//            arr[j + 1] = temp;
+//        }
+        quickSort(arr, 0, arr.length - 1);
     }
 
     private void grow() {
