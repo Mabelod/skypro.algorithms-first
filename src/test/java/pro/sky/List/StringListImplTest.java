@@ -17,11 +17,11 @@ import static pro.sky.List.Constants.*;
 
 class StringListImplTest {
 
-    @BeforeEach
-    public void beforeEach() {
-//        String[] strings = {Hello, Book, Bye, News};
-//        when(stringList.toArray()).thenReturn(strings);
-    }
+//    @BeforeEach
+//    public void beforeEach() {
+////        String[] strings = {Hello, Book, Bye, News};
+////        when(stringList.toArray()).thenReturn(strings);
+//    }
 
     private final StringList stringList = new StringListImpl();
     private final StringList stringList1 = new StringListImpl();
@@ -134,11 +134,14 @@ class StringListImplTest {
         assertThat(stringList.isEmpty()).isEqualTo(expected);
     }
 
-//    @ParameterizedTest
-//    @MethodSource("params")
-//    void clear(String item) {
-//        String[] expected = new String[0];
-//    }
+    @Test
+    void clear() {
+        stringList.add("Привет");
+        stringList.add("Привет");
+        stringList.add("Привет");
+        stringList.clear();
+        assertThat(stringList.size()).isEqualTo(0);
+    }
 
     @ParameterizedTest
     @MethodSource("params")
